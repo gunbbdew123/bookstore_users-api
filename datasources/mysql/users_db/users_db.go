@@ -15,7 +15,6 @@ var (
 )
 
 func init() {
-
 	Loaderr := godotenv.Load("environment_variable.env")
 	if Loaderr != nil {
 		log.Fatal("Error loading .env file")
@@ -31,7 +30,7 @@ func init() {
 	)
 
 	var err error
-	Client, err := sql.Open("mysql", datasourceName)
+	Client, err = sql.Open("mysql", datasourceName)
 	if err != nil {
 		panic(err)
 	}
