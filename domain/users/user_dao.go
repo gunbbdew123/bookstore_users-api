@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gunbbdew123/bookstore_users-api/datasources/mysql/users_db"
+	"github.com/gunbbdew123/bookstore_users-api/utils/crypto_utils"
 	"github.com/gunbbdew123/bookstore_users-api/utils/date_utils"
 	"github.com/gunbbdew123/bookstore_users-api/utils/errors"
 	"github.com/gunbbdew123/bookstore_users-api/utils/mysql_utils"
@@ -45,6 +46,7 @@ func (user *User) Save() *errors.RestErr {
 
 	user.Status = StatusActive
 	user.DateCreated = date_utils.GetNowDBFormat()
+	user.Password = crypto_utils.GetMd5(user.Password)
 
 	insertResult, SaveErr := stmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated, user.Status, user.Password)
 	if SaveErr != nil {
@@ -88,7 +90,7 @@ func (user *User) Delete() *errors.RestErr {
 	return nil
 }
 
-func (user *User) FindByStatus(status string) ([]User, *errors.RestErr) {
+func (user *User) FindByStatus(status string) (Users, *errors.RestErr) {
 	stmt, err := users_db.Client.Prepare(queryFindUserByStatus)
 	if err != nil {
 		return nil, errors.NewInternalServerError(err.Error())
